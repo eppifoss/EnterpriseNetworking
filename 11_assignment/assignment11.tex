@@ -1,3 +1,6 @@
+
+
+
 \documentclass{article}
 \usepackage[utf8]{inputenc}
 
@@ -22,7 +25,7 @@
 \usepackage{listings}
 
 % Sets the depth of toc to be limited to sections
-\setcounter{tocdepth}{2} 
+\setcounter{tocdepth}{3} 
 
 
 
@@ -31,7 +34,8 @@
 %\renewcommand{\thesubsubsection}{\arabic{\subsubsection}}
 
 
-
+%Add path to images
+%\graphicspath{./imgs/}
 
 \date{November 11, 2016}
 
@@ -55,7 +59,132 @@ The purpose of this assignment is to learn how to secure Cisco devices and how t
 \part{Methods and Materials}
 
 
+\section{Creating the topology}
+
+\subsection{Deploying the routers and the switch}
+
+We use the 1841 model when deploying the router and the model 2960-24TT for the switch. We deploy both the routers and the switch in Packet Tracer. 
 
 
+\subsection{Configuring Passwords}
+After deploying the router and the switch, we start configuration for the router. We use the \textbf{enable} command to enter the privileged EXEC mode, then the \textbf{configure terminal} command to enter the configuration mode. We add security to the router by configuring a password. We use the command \textbf{enable secret \textless\emph{your password}\textgreater} to enable the password, where \emph{your password} is replaced with the actual password. There is two ways to configure the password to access the router's priveleged EXEC mode. We can either use the \textbf{enable secret} or the \textbf{enable password} command. The \textit{enable secret} takes precedence over the \textit{enable password} command.
+
+\subsubsection{\emph{enable password}}
+The \textit{enable secret} command sets a password for the various privilege levels. We use the command \textbf{enable password \textless\emph{password}\textgreater} to set the password. This command does not encrypt the password saved in the \emph{running-config} file.
+
+\subsubsection{\emph{enable secret}}
+The \textit{enable secret}  command establishes a password for the privilege levels. The difference to the \textit{enable password} is that this command encrypts the password stored in the \emph{running-config} file providing better security.
+
+\subsection{Observing the changes with password enabled}
+
+After we issue the \textbf{enable secret} command we have to enter the password when going from the user EXEC mode to the priveleged EXEC mode, we can this in Figure \ref{fig:passprev}. 
+
+\begin{figure}
+\centering
+\includegraphics[width=0.5\textwidth]{imgs/passprev.png}
+\caption{Entering the privelege EXEC mode with password enable with \textbf{enable secret} command.}
+\label{fig:passprev}
+\end{figure}
+
+\subsection{Storing password in \emph{running-config}}
+We can see the \textit{running-config} using the \textbf{show running-config} command in the CLI of the router. We can observe as seen in Figure \ref{fig:runconfpass} that the password is encrypted.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{imgs/runconfpass}
+    \caption{The \textit{running-config} in router, storing the password after \textbf{enable secret} command.}
+    \label{fig:runconfpass}
+\end{figure}
+
+
+The 5 that follows after \textit{enable secret} implies that the following is a hash for the password, encrypted using MD5 algorithm. We can see this in Figure \ref{fig:ensec5}, there is an encrypted hash of the password following the 5. 
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{imgs/ensec5}
+    \caption{Checking \textit{enable secret} options}
+    \label{fig:ensec5}
+\end{figure}
+
+\subsubsection{Extra}
+
+We can use both the \textbf{enable secret} and the \textbf{enable password} command at the same time. The router uses the encrypted password when both are present. When using the same password for both the encrypted and the unencrypted password, the CLI warns us to use different but still allows it as seen in Figure \ref{fig:enpassonly}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{imgs/enpassonly}
+    \caption{Using the same password for both \textbf{enable secret} and \textbf{enable password}}
+    \label{fig:enpassonly}
+\end{figure}
+
+\subsection{Enable password for console access}
+
+Then we will also configure a password for the console access. We use the commands \textbf{line  con 0} in the configuration mode. This lets us configure the primary terminal line. 
+\subsubsection{Set password}
+Then we use the \textbf{password} command to set the password.
+\subsubsection{Enable login for console access}
+We use the \textbf{login} command to enable password checking. 
+
+\subsubsection{Loggin prompt}
+After setting the password for console access we get prompted to enter the password when we open the CLI, we need to enter the password even to enter the user EXEC mode as can be seen in Figure \ref{fig:logincon}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.7\textwidth]{imgs/logincon}
+    \caption{Login prompt for access to the console.}
+    \label{fig:logincon}
+\end{figure}
+
+\subsection{Console Access Password in \emph{running-conf}}
+
+The password set for console access is not encrypted when we check the \textit{running-configuration} using \textbf{show running-conf}, the password is stored in plain text. 
+
+\subsection{configuring password for telnet}
+
+\subsubsection{Telnet configuration mode}
+We enter the telnet configuration mode using the \textbf{line vty 0 4} command in the global configuration mode.
+
+
+We then set the password with the \textbf{password} command and enable login using the \textbf{login} command. 
+
+Checking the \textit{running-configuration} we can see that the passwords for the \textit{console access} and the \textit{terminal access} are stored in plain text.
+
+\subsection{Encrypt all passwords}
+
+As many of the passwords are stored in plain text we need to increase the security of the plain-text password. We use the \textbf{service password-encryption} command in the global configuration mode to encrypt all the unencrypted passwords. 
+
+\subsubsection{\textit{running-conf} after encrypting password}
+
+We can see in Figure \ref{fig:encpasses} that all the password have been encrypted. We can see that there is a number, 7, after password. This specifies that this was encryption Type 7.  
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.6\textwidth]{imgs/encpasses}
+    \caption{The encrypted password after running \textbf{service password-encryption}}
+    \label{fig:encpasses}
+\end{figure}
+
+\subsection{Type 5 and Type 7 encryptions}
+
+As seen in Figure \ref{fig:encpasses} all the passwords that were encrypted using the \textbf{service password-encryption} command was encrypted with encryption Type 7. Previously when running the \textbf{enable secret} command the passwords were encrypted using Type 5, as seen in Figure \ref{fig:runconfpass}.
+
+The Type 5 encryption is done using an MD5 algorithm to generate the password hash. Whereas the Type 7 encryption is done using a weak algorithm, it is just XORs the password.
+
+\subsection{Securing the Switch}
+
+We follow the same procedures to secure the switch by adding password and encrypting them. We use the same password as in the previous assignment.
+
+\begin{itemize}
+    \item \textbf{enable secret} Add password for accessig the privileged EXEC mode.
+    \item \textbf{line con 0} Configure console access 
+        \subitem \textbf{password} Set password for console access
+        \subitem \textbf{login} Enable password login for console access
+    \item \textbf{line vty 0 4} Configure telnet access
+        \subitem \textbf{password} Set password for telnet access
+        \subitem \textbf{login} Enable password login for telnet access
+     \item \textbf{service password-encryption} Encrypt all pasword in the \textit{runnnig-config}
+\end{itemize}
+
+\section{Configuring Access lists}
 
 \end{document}
