@@ -1,0 +1,280 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[usenames, dvipnames, svgnames,table]{xcolor}
+
+\usepackage{graphicx}
+
+\setcounter{tocdepth}{1}
+
+\renewcommand{\thesubsection}{\alph{subsection}}
+
+\title{\textbf{Assignment 6}\\ STP and VLAN}
+\author{s316620}
+\date{September 30, 2016}
+
+\begin{document}
+
+\maketitle
+\newpage
+
+\part*{Introduction}
+This task is for the understanding and practicing the Spanning Tree Protocol (STP) and Virtual LAN (VLAN). This is done by doing exersices that are relevant to these topics.
+
+\part*{Materials and Methods}
+
+\section{STP (Spanning Tree Protocol)}
+
+\subsection{Root election}
+
+All the figures from the assignment have a root switch which can be seen in Table \ref{tab:Root_switches}.
+
+\begin{table}[!h]
+ \centering
+    \begin{tabular}{|c|c|c|}
+        \hline
+        Figure & Root Switch & Bridge-ID \\ \hline
+        1      & Switch-A    & 27        \\ 
+        2      & Switch-C    & 23        \\ 
+        3      & Switch-D    & 7         \\ 
+        4      & Switch-G    & 3         \\ 
+        5      & Switch-G    & 3         \\
+        \hline
+    \end{tabular}
+     \caption{Root Switches with Bridge-ID for all the figures.}
+    \label{tab:Root_switches}
+\end{table}
+
+\subsection{Port roles (with equal link costs)}
+
+"R" denotes a root port, "D" for a designated port and "U" for an undesignated port. The assumption is made that the link capacity is the same on all links. Table \ref{tab:fig1ports}, \ref{tab:fig2ports}, \ref{tab:fig3ports}, \ref{tab:fig4ports} and \ref{tab:fig5ports} shows the Port Roles for all the Switches in each topology.
+
+\begin{table}[!h]
+      \centering
+    \begin{tabular}{|c|c|}
+    \hline
+         & p0           \\
+    \hline
+    Switch-A &      D     \\ 
+    Switch-B &       R  \\
+    \hline
+    \end{tabular}
+    \caption{Port roles for the Figure 1 topology}
+    \label{tab:fig1ports}
+\end{table}
+
+\begin{table}[!h]
+      \centering
+    \begin{tabular}{|c|c|c|}
+    \hline
+         & p0 & p1       \\
+    \hline
+    Switch-A &  U & R      \\ 
+    Switch-B &  U & R      \\
+    Switch-C & D & D      \\
+    \hline
+    \end{tabular}
+    \caption{Port roles for the Figure 2 topology}
+    \label{tab:fig2ports}
+\end{table}
+
+
+\begin{table}[!h]
+      \centering
+    \begin{tabular}{|c|c|c|c|}
+    \hline
+         & p0 & p1 & p2 \\
+    \hline
+    Switch-A &  U & R & -    \\ 
+    Switch-B & U  & U & R       \\
+    Switch-C & D  & U & R       \\
+    Switch-D &   D & D & -       \\
+    Switch-E &   D  & R & -     \\
+    \hline
+    \end{tabular}
+    \caption{Port roles for the Figure 3 topology}
+    \label{tab:fig3ports}
+\end{table}
+
+\begin{table}[!h]
+ \centering
+    \begin{tabular}{|c|c|c|c|c|}
+    \hline
+         & p0 & p1 & p2 & p3  \\
+    \hline
+    Switch-A & D & D & D & R  \\ 
+    Switch-B & R & U & U & - \\
+    Switch-C & R & U & U & D  \\
+    Switch-D & U & R & D & -  \\
+    Switch-E & U & D & D & R  \\
+    Switch-F & R & D & D & D  \\
+    Switch-G & D & D & D & -  \\
+    \hline
+    \end{tabular}
+    \caption{Port roles for the Figure 4 topology}
+    \label{tab:fig4ports}
+\end{table}
+
+
+\begin{table}[!h]
+ \centering
+    \begin{tabular}{|c|c|c|c|c|c|}
+    \hline
+         & p0 & p1 & p2 & p3 & p4 \\
+    \hline
+    Switch-A & U & D & D & R & U \\
+    Switch-B & U & U & U & R & - \\
+    Switch-C & R & U & U & D & - \\
+    Switch-D & U & R & D & - & - \\
+    Switch-E & U & D & D & R & - \\
+    Switch-F & R & D & D & D & U \\
+    Switch-G & D & D & D & D & - \\
+    \hline
+    \end{tabular}
+    \caption{Port roles for the Figure 5 topology}
+    \label{tab:fig5ports}
+\end{table}
+
+
+\subsection{Port roles (with unequal link costs)}
+
+The table with the port roles changes when the links have unequal costs. Table \ref{tab:fig4neq} and \ref{tab:fig5neq} shows Figure 4 and 5, respectively, when the links have unequal costs. Here the four direct links between switches A, B, C and E are of 1Gbps, while all other links are of 100Mbps. STP considers that a 1Gbps link has a link cost of 4 and a 100Mbps link has a cost of 19.
+
+\begin{table}[!h]
+ \centering
+    \begin{tabular}{|c|c|c|c|c|}
+    \hline
+         & p0 & p1 & p2 & p3  \\
+    \hline
+    Switch-A & D & D & D & R  \\ 
+    Switch-B & R & U & D & - \\
+    Switch-C & R & U & D & D  \\
+    Switch-D & R & U & D & -  \\
+    Switch-E & R & U & D & U  \\
+    Switch-F & R & D & D & U  \\
+    Switch-G & D & D & D & -  \\
+    \hline
+    \end{tabular}
+    \caption{Port roles for the Figure 4 topology with unequal link costs.}
+    \label{tab:fig4neq}
+\end{table}
+
+
+\begin{table}[!h]
+      \centering
+    \begin{tabular}{|c|c|c|c|c|c|}
+    \hline
+         & p0 & p1 & p2 & p3 & p4 \\
+    \hline
+    Switch-A & U & D & D & R & U \\
+    Switch-B & U & U & D & R & - \\
+    Switch-C & R & U & U & D & - \\
+    Switch-D & U & R & D & - & - \\
+    Switch-E & R & D & D & U & - \\
+    Switch-F & R & D & D & U & U \\
+    Switch-G & D & D & D & D & - \\
+    \hline
+    \end{tabular}
+    \caption{Port roles for the Figure 5 topology with unequal link costs.}
+    \label{tab:fig5neq}
+\end{table}
+
+
+
+\subsection{MAC address table}
+
+For the topology in Figure 5 from Assignment 6 and unequal link costs a simplified MAC address table at Switches B, F and G, assuming that the switches have learned all MAC addresses of the hosts in the LAN. 
+
+\begin{table}[!h]
+   \centering
+    \begin{tabular}{|c|c|}
+        \hline
+        Hosts MAC addresses & port \\ \hline
+                           & p0   \\ 
+                           & p1   \\ 
+                  S,T         & p2   \\ 
+                     W,Q,R,U,V      & p3   \\
+        \hline
+    \end{tabular}
+    \caption{MAC address table for Switch-B from Figure 5}
+    \label{tab:bmac}
+\end{table}
+
+\begin{table}[!h]
+    \centering
+    \begin{tabular}{|c|c|}
+        \hline
+        Hosts MAC addresses & port \\ \hline
+                 W,Q,R,S,T          & p0   \\ 
+               V            & p1   \\ 
+                U           & p2   \\ 
+                           & p3   \\
+                           & p4  \\
+        \hline
+    \end{tabular}
+    \caption{MAC address table for Switch-F from Figure 5}
+    \label{tab:bmac}
+\end{table}
+
+\begin{table}[!h]
+    \centering
+    \begin{tabular}{|c|c|}
+        \hline
+        Hosts MAC addresses & port \\ \hline
+             Q,R              & p0   \\ 
+            W           & p1   \\ 
+              U,V           & p2   \\ 
+             S,T              & p3   \\
+        \hline
+    \end{tabular}
+    \caption{MAC address table for Switch-G from Figure 5}
+    \label{tab:bmac}
+\end{table}
+
+\section{More STP}
+
+\subsection{}
+
+Table \ref{tab:fig6ports} and Table  \ref{tab:fig7ports} shows the port roles for Figure 6 and Figure 7 from the assignment. 
+
+\begin{table}[!h]
+      \centering
+    \begin{tabular}{|c|c|c|c|c|c|}
+    \hline
+         & p0 & p1 & p2 & p3 & p4 \\
+    \hline
+    Switch-A & U & U & D & U & R \\ 
+    Switch-B & U & U & R & U & - \\
+    Switch-C & U & U & R & D & - \\
+    Switch-D & D & R & D & - & - \\
+    Switch-E & D & D & D & D & - \\
+    Switch-F & D & D & D & R & D \\
+    Switch-G & U & D & R & U & - \\
+    \hline
+    \end{tabular}
+    \caption{Port roles for the Figure 6 topology}
+    \label{tab:fig6ports}
+\end{table}
+
+\begin{table}[!h]
+      \centering
+    \begin{tabular}{|c|c|c|c|c|c|}
+    \hline
+         & p0 & p1 & p2 & p3 & p4 \\
+    \hline
+    Switch-A & U & R & D & D & D \\
+    Switch-B & U & R & D & U & - \\
+    Switch-C & D & D & D & D & - \\
+    Switch-D & R & U & D & - & - \\
+    Switch-E & R & U & D & U & - \\
+    Switch-F & U & D & D & U & R \\
+    Switch-G & R & D & U & U & - \\
+    \hline
+    \end{tabular}
+    \caption{Port roles for the Figure 7 topology}
+    \label{tab:fig7ports}
+\end{table}
+
+\part*{Conclusion}
+The Spanning Tree Protocol (STP) is used for loop prevention. With STP there is always a root switch. Each ports have roles; Root(R), Designated(D) and Undesignated(U). The Root and the Designated ports have the Forwarding port states, while the Undesignated ports have the Blocking state.  
+
+\end{document}
