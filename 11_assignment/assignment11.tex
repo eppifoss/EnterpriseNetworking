@@ -30,8 +30,8 @@
 
 
 %% Changes the subsubsection to be numbered with alphabets
-\renewcommand{\thesubsubsection}{\alph{subsubsection}}
-%\renewcommand{\thesubsubsection}{\arabic{\subsubsection}}
+ \renewcommand{\thesubsection}{\alph{subsection}}
+\renewcommand{\thesubsubsection}{\roman{subsubsection}}
 
 
 %Add path to images
@@ -141,7 +141,7 @@ The password set for console access is not encrypted when we check the \textit{r
 
 \subsection{configuring password for telnet}
 
-\subsubsection{Telnet configuration mode}
+
 We enter the telnet configuration mode using the \textbf{line vty 0 4} command in the global configuration mode.
 
 
@@ -246,5 +246,91 @@ We check the connectivity of the network to verify that everything is configured
 \label{fig:2pingdef}
 \end{figure}
 
+\subsection{Configuring Routing with RIPv2}
+
+For full connectivity in the network we will configure the routers with a routing protocol. Here, the RIPv2 routing protocol will be used. We configure the routing protocol by issuing the following commands:
+\begin{itemize}
+    \item \textbf{router rip} In the configuration mode.
+    \subitem \textbf{version 2} Specifies the routing protocol as RIP version 2
+    \subitem \textbf{network x.x.x.x} This command is issued for all the networks that are connected to the router, where x.x.x.x is one specific network.
+\end{itemize}
+
+
+We use this method to configure all the routers in the topology. Then check that there is connectivity between all the hosts. We can see in Figure \ref{fig:pinghosts} that there is full connectivity between the hosts. 
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.6\textwidth]{imgs/pinghosts}
+\caption{Checking connectivity between hosts}
+\label{fig:pinghosts}
+\end{figure}
+
+\subsection{Configuring ACL}
+
+Now we wil configure ACLs in our routers. Now we want to allow all traffic originating from the students and system administrator network to reach the professor's network, but we do not want to let the school employees access the professor's network. To do this we deploy an access-list on Router1 on all the incoming traffic on interface Fa0/0. We do this by create two rules with standard ACL that allows the traffic of networks 192.168.0.0/24 and 192.168.3.0/24. We do this using the following commands, in the global configuration mode: 
+\begin{itemize}
+\item \textbf{access-list 1 permit 192.168.0.0 0.0.0.255}
+\item \textbf{access-list 1 permit 192.168.3.0 0.0.0.255}
+\end{itemize}
+Then we add this two rules to the interface Fa0/0 by using the command:\\
+\begin{itemize}
+\item \textbf{ip access-group 1 in}
+\end{itemize}
+This specifies that it allows incoming traffic of access-group 1 (defined above) only at interface Fa0/0 at Router1. When checking connectivity with \textit{ping} we can see that this will let PC0 and PC3 reach PC1, but not PC2 as seen in Figure \ref{fig:2aclping2}.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.6\textwidth]{imgs/2aclping2}
+\caption{Checking connectivity from PC0, PC2 and PC3 to PC1}
+\label{fig:2aclping2}
+\end{figure}
+
+We can not ping even from any of the other routers. After letting some time pass there will be no connectivity between any of the hosts as the routing table at Router1 will not be updated as only the student and system administrator's networks traffic is recieved by the interface Fa0/0 at Router1, we can see that in Figure \ref{fig:router1rt}. An alternative would be to configure the access-list groups at Fa0/1 and restrict incoming outgoing traffic. So the packets can be recieved by the router but would be droped before it went to PC1. The command to use would be : \textbf{ip access-group 1 out} at interface Fa0/1 in Router1. Another alternative would be to add the network 10.0.0.0/24 to access-list for inbound, though this will also allow the routers to reach the professors network (PC1).
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\textwidth]{imgs/router1rt}
+\caption{Routing table at Router1}
+\label{fig:router1rt}
+\end{figure}
+
+\subsection{Configuring outbound ACL}
+Now configuring an outbound ACL that permits all traffic originating from the professors network.  We make an access-list with number2 with the command:
+\begin{itemize}
+\item \textbf{access-list 1 permit 192.168.1.0 0.0.0.255}
+\end{itemize}
+And then add this access-list to the internal interface Fa0/1 at Router1. We do this using the command: 
+\begin{itemize}
+\item \textbf{ip access-group 2 in}
+\end{itemize}
+
+
+I can ping from PC1 to PC0 and PC3, but only if I implement one of alternative methods, for restricting access to PC2, as mentioned above.
+
+\subsection{Extended ACLs}
+
+Extended ACLs can specify some special reserved keywords, One one of the keyword is \textit{any} which corressponds to 0.0.0.0/255.255.255.255, another is \textit{host} which is same as typing ``/0.0.0.0''. The extended ACLs use higher numbers (100-199) whereas standard ACLs use lower numbers (1-99). 
+
+\subsection{Allowing only ICMP traffic}
+
+With extended ACLs we can restrict traffic to only ICMP traffic, or any other particular protocol, useing the command: 
+\begin{itemize}
+\item \textbf{access-list 101 permit icmp any any}
+\end{itemize}  And setting the rules to both the interfaces of a router. 
+
+\subsection{Allowign only a particular host external access}
+
+We can give access to only 1 PC from the school employee network to have access to students network by allowing traffic going only from that host to the students network. We make a rule that looks like:\\
+\begin{itemize}
+\item \textbf{access-list 101 permit ip host 192.168.2.2 192.168.0.0 0.0.0.255}
+\end{itemize}
 
 \end{document}
+
+
+
+
+
+
+
+
