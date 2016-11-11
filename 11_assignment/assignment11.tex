@@ -59,7 +59,7 @@ The purpose of this assignment is to learn how to secure Cisco devices and how t
 \part{Methods and Materials}
 
 
-\section{Creating the topology}
+\section{Security Measures}
 
 \subsection{Deploying the routers and the switch}
 
@@ -186,5 +186,65 @@ We follow the same procedures to secure the switch by adding password and encryp
 \end{itemize}
 
 \section{Configuring Access lists}
+
+
+\subsection{Setting up the topology}
+
+We use 4 like the router previously configured and connect them to the switch that was previously configured. Our topology in Packet Tracer looks like Figure \ref{fig:2topo}.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.7\textwidth]{imgs/2topo}
+\caption{Topology in Packet Tracer}
+\label{fig:2topo}
+\end{figure}
+
+\subsection{Configuring the devices with IP addresses}
+
+Now that we have a topology in Packet Tracer, we will configure the all the interfaces with an IP address as seen in Table \ref{tab:2intip}. After all the interfaces have been assigned an IP address we will make sure that the interfaces are \textit{up}. We will also configure the default gateway for the hosts to be the interface of the router they are each connected to respectively.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+Device Name & Interface & IP Address \\
+\hline
+Router0 & Fa0/0 & 10.0.0.1/24 \\
+Router 1 & Fa0/0 &  10.0.0.2/24\\
+Router 2 & Fa0/0 & 10.0.0.3/24\\
+Router 3 & Fa0/0 & 10.0.0.4/24\\
+Router0 & Fa0/1 & 192.168.0.1/24\\
+Router1 & Fa0/1 & 192.168.1.1/24\\
+Router2 & Fa0/1 & 192.168.2.1/24\\
+Router3 & Fa0/1 & 192.168.3.1/24\\
+PC0 & Fa0/0 & 192.168.0.2/24\\
+PC1 & Fa0 & 192.168.1.2/24\\
+PC2 & Fa0 & 192.168.2.2/24\\
+PC3 & Fa0 & 192.168.3.2/24\\
+\hline
+\end{tabular}
+\caption{Interface IP addresses for hosts and routers.}
+\label{tab:2intip}
+\end{table}
+
+
+\subsection{Checking connectivity}
+
+We check the connectivity of the network to verify that everything is configured properly. The routers in the 10.0.0.0/24 network should ping each other as seen in Figure \ref{fig:2pingrouters}, and the PC should be able to ping its own router  \ref{fig:2pingdef}. 
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.6\textwidth]{imgs/2pingrouters}
+\caption{Checking connectivity between routers.}
+\label{fig:2pingrouters}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.6\textwidth]{imgs/2pingdef}
+\caption{Checking connectivity between the hosts and the routers.}
+\label{fig:2pingdef}
+\end{figure}
+
 
 \end{document}
